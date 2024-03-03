@@ -1,0 +1,301 @@
+TEST   1: Bottom-right quadrant.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (50, 50) -> (150, 150) [100 x 100]
+        Analyzing 1 rectangles...
+                (0, 0) -> (150, 150) [150 x 150]
+        ==> Extents: 1
+                (0, 0) -> (150, 150) [150 x 150]
+Tests completed in 0.000001 seconds.
+
+TEST   2: Top-right quadrant.
+        Analyzing 2 rectangles...
+                (200, 200) -> (300, 300) [100 x 100]
+                (250, 250) -> (350, 350) [100 x 100]
+        Analyzing 1 rectangles...
+                (200, 200) -> (350, 350) [150 x 150]
+        ==> Extents: 1
+                (200, 200) -> (350, 350) [150 x 150]
+Tests completed in 0.000001 seconds.
+
+TEST   3: Bar through center vertically.
+        Analyzing 2 rectangles...
+                (50, 50) -> (250, 250) [200 x 200]
+                (125, 25) -> (175, 275) [50 x 250]
+        Analyzing 1 rectangles...
+                (50, 25) -> (250, 275) [200 x 250]
+        ==> Extents: 1
+                (50, 25) -> (250, 275) [200 x 250]
+Tests completed in 0.000000 seconds.
+
+TEST   4: Bar through center horizontally.
+        Analyzing 2 rectangles...
+                (350, 350) -> (550, 550) [200 x 200]
+                (325, 425) -> (575, 475) [250 x 50]
+        Analyzing 1 rectangles...
+                (325, 350) -> (575, 550) [250 x 200]
+        ==> Extents: 1
+                (325, 350) -> (575, 550) [250 x 200]
+Tests completed in 0.000001 seconds.
+
+TEST   5: Bar partial insertion on left.
+        Analyzing 2 rectangles...
+                (200, 0) -> (400, 200) [200 x 200]
+                (25, 75) -> (225, 125) [200 x 50]
+        Analyzing 1 rectangles...
+                (25, 0) -> (400, 200) [375 x 200]
+        ==> Extents: 1
+                (25, 0) -> (400, 200) [375 x 200]
+Tests completed in 0.000001 seconds.
+
+TEST   6: Bar partial insertion on right.
+        Analyzing 2 rectangles...
+                (0, 300) -> (200, 500) [200 x 200]
+                (175, 375) -> (375, 425) [200 x 50]
+        Analyzing 1 rectangles...
+                (0, 300) -> (375, 500) [375 x 200]
+        ==> Extents: 1
+                (0, 300) -> (375, 500) [375 x 200]
+Tests completed in 0.000000 seconds.
+
+TEST   7: Bar partial insertion on top.
+        Analyzing 2 rectangles...
+                (50, 50) -> (250, 250) [200 x 200]
+                (125, 25) -> (175, 275) [50 x 250]
+        Analyzing 1 rectangles...
+                (50, 25) -> (250, 275) [200 x 250]
+        ==> Extents: 1
+                (50, 25) -> (250, 275) [200 x 250]
+Tests completed in 0.000000 seconds.
+
+TEST   8: Bar partial insertion on bottom.
+        Analyzing 2 rectangles...
+                (350, 350) -> (550, 550) [200 x 200]
+                (325, 425) -> (575, 475) [250 x 50]
+        Analyzing 1 rectangles...
+                (325, 350) -> (575, 550) [250 x 200]
+        ==> Extents: 1
+                (325, 350) -> (575, 550) [250 x 200]
+Tests completed in 0.000001 seconds.
+
+TEST   9: Fully subsumed horizontal bar.
+        Analyzing 2 rectangles...
+                (0, 0) -> (200, 200) [200 x 200]
+                (25, 75) -> (175, 125) [150 x 50]
+        Analyzing 1 rectangles...
+                (0, 0) -> (200, 200) [200 x 200]
+        ==> Extents: 1
+                (0, 0) -> (200, 200) [200 x 200]
+Tests completed in 0.000000 seconds.
+
+TEST  10: Fully subsumed vertical bar.
+        Analyzing 2 rectangles...
+                (300, 300) -> (500, 500) [200 x 200]
+                (375, 325) -> (425, 475) [50 x 150]
+        Analyzing 1 rectangles...
+                (300, 300) -> (500, 500) [200 x 200]
+        ==> Extents: 1
+                (300, 300) -> (500, 500) [200 x 200]
+Tests completed in 0.000000 seconds.
+
+TEST  11: Fully matched overlay.
+        Analyzing 2 rectangles...
+                (0, 0) -> (200, 200) [200 x 200]
+                (0, 0) -> (200, 200) [200 x 200]
+        Analyzing 1 rectangles...
+                (0, 0) -> (200, 200) [200 x 200]
+        ==> Extents: 1
+                (0, 0) -> (200, 200) [200 x 200]
+Tests completed in 0.000000 seconds.
+
+TEST  12: (no collision) Completely unrelated squares.
+        Analyzing 2 rectangles...
+                (300, 300) -> (500, 500) [200 x 200]
+                (600, 600) -> (800, 800) [200 x 200]
+        ==> Extents: 2
+                (300, 300) -> (500, 500) [200 x 200]
+                (600, 600) -> (800, 800) [200 x 200]
+Tests completed in 0.000000 seconds.
+
+TEST  13: (no collision) Bordering at bottom.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (0, 100) -> (100, 200) [100 x 100]
+        ==> Extents: 2
+                (0, 0) -> (100, 100) [100 x 100]
+                (0, 100) -> (100, 200) [100 x 100]
+Tests completed in 0.000001 seconds.
+
+TEST  14: (no collision) Bordering at right.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (100, 0) -> (200, 100) [100 x 100]
+        ==> Extents: 2
+                (0, 0) -> (100, 100) [100 x 100]
+                (100, 0) -> (200, 100) [100 x 100]
+Tests completed in 0.000001 seconds.
+
+TEST  15: (no collision) Corner points match bottom-right.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (100, 100) -> (200, 200) [100 x 100]
+        ==> Extents: 2
+                (0, 0) -> (100, 100) [100 x 100]
+                (100, 100) -> (200, 200) [100 x 100]
+Tests completed in 0.000001 seconds.
+
+TEST  16: (no collision) Corner points match top-right.
+        Analyzing 2 rectangles...
+                (0, 100) -> (100, 200) [100 x 100]
+                (100, 0) -> (200, 100) [100 x 100]
+        ==> Extents: 2
+                (0, 100) -> (100, 200) [100 x 100]
+                (100, 0) -> (200, 100) [100 x 100]
+Tests completed in 0.000001 seconds.
+
+TEST  17: 1-pixel overlap at bottom.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (0, 99) -> (100, 199) [100 x 100]
+        Analyzing 1 rectangles...
+                (0, 0) -> (100, 199) [100 x 199]
+        ==> Extents: 1
+                (0, 0) -> (100, 199) [100 x 199]
+Tests completed in 0.000000 seconds.
+
+TEST  18: 1-pixel overlap at right.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (99, 0) -> (199, 100) [100 x 100]
+        Analyzing 1 rectangles...
+                (0, 0) -> (199, 100) [199 x 100]
+        ==> Extents: 1
+                (0, 0) -> (199, 100) [199 x 100]
+Tests completed in 0.000000 seconds.
+
+TEST  19: Slight overlap at bottom-right corner.
+        Analyzing 2 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (99, 99) -> (199, 199) [100 x 100]
+        Analyzing 1 rectangles...
+                (0, 0) -> (199, 199) [199 x 199]
+        ==> Extents: 1
+                (0, 0) -> (199, 199) [199 x 199]
+Tests completed in 0.000000 seconds.
+
+TEST  20: Slight overlap at top-right corner.
+        Analyzing 2 rectangles...
+                (0, 99) -> (100, 199) [100 x 100]
+                (99, 0) -> (199, 100) [100 x 100]
+        Analyzing 1 rectangles...
+                (0, 0) -> (199, 199) [199 x 199]
+        ==> Extents: 1
+                (0, 0) -> (199, 199) [199 x 199]
+Tests completed in 0.000000 seconds.
+
+TEST  21: Triple collision, direct.
+        Analyzing 3 rectangles...
+                (10, 10) -> (30, 20) [20 x 10]
+                (8, 5) -> (48, 45) [40 x 40]
+                (17, 0) -> (117, 100) [100 x 100]
+        Analyzing 1 rectangles...
+                (8, 0) -> (117, 100) [109 x 100]
+        ==> Extents: 1
+                (8, 0) -> (117, 100) [109 x 100]
+Tests completed in 0.000000 seconds.
+
+TEST  22: Triple collision; third is an extent collision.
+        Analyzing 3 rectangles...
+                (0, 0) -> (100, 100) [100 x 100]
+                (50, 50) -> (150, 150) [100 x 100]
+                (125, 0) -> (425, 25) [300 x 25]
+        Analyzing 1 rectangles...
+                (0, 0) -> (425, 150) [425 x 150]
+        ==> Extents: 1
+                (0, 0) -> (425, 150) [425 x 150]
+Tests completed in 0.000001 seconds.
+
+TEST  23: Extent islands.
+        Analyzing 12 rectangles...
+                (0, 0) -> (10, 10) [10 x 10]
+                (15, 0) -> (25, 10) [10 x 10]
+                (30, 0) -> (40, 10) [10 x 10]
+                (45, 0) -> (55, 10) [10 x 10]
+                (60, 0) -> (70, 10) [10 x 10]
+                (75, 0) -> (85, 10) [10 x 10]
+                (90, 0) -> (100, 10) [10 x 10]
+                (105, 0) -> (115, 10) [10 x 10]
+                (120, 0) -> (130, 10) [10 x 10]
+                (135, 0) -> (145, 10) [10 x 10]
+                (150, 0) -> (160, 10) [10 x 10]
+                (165, 0) -> (175, 10) [10 x 10]
+        ==> Extents: 12
+                (0, 0) -> (10, 10) [10 x 10]
+                (15, 0) -> (25, 10) [10 x 10]
+                (30, 0) -> (40, 10) [10 x 10]
+                (45, 0) -> (55, 10) [10 x 10]
+                (60, 0) -> (70, 10) [10 x 10]
+                (75, 0) -> (85, 10) [10 x 10]
+                (90, 0) -> (100, 10) [10 x 10]
+                (105, 0) -> (115, 10) [10 x 10]
+                (120, 0) -> (130, 10) [10 x 10]
+                (135, 0) -> (145, 10) [10 x 10]
+                (150, 0) -> (160, 10) [10 x 10]
+                (165, 0) -> (175, 10) [10 x 10]
+Tests completed in 0.000003 seconds.
+
+TEST  24: Extent islands with an overlay.
+        Analyzing 13 rectangles...
+                (0, 0) -> (500, 500) [500 x 500]
+                (0, 0) -> (10, 10) [10 x 10]
+                (15, 0) -> (25, 10) [10 x 10]
+                (30, 0) -> (40, 10) [10 x 10]
+                (45, 0) -> (55, 10) [10 x 10]
+                (60, 0) -> (70, 10) [10 x 10]
+                (75, 0) -> (85, 10) [10 x 10]
+                (90, 0) -> (100, 10) [10 x 10]
+                (105, 0) -> (115, 10) [10 x 10]
+                (120, 0) -> (130, 10) [10 x 10]
+                (135, 0) -> (145, 10) [10 x 10]
+                (150, 0) -> (160, 10) [10 x 10]
+                (165, 0) -> (175, 10) [10 x 10]
+        Analyzing 1 rectangles...
+                (0, 0) -> (500, 500) [500 x 500]
+        ==> Extents: 1
+                (0, 0) -> (500, 500) [500 x 500]
+Tests completed in 0.000001 seconds.
+
+TEST  25: Four simple sprites (four extents; no collisions).
+        Analyzing 4 rectangles...
+                (0, 0) -> (5, 20) [5 x 20]
+                (150, 150) -> (160, 170) [10 x 20]
+                (942, 238) -> (952, 258) [10 x 20]
+                (10, 1550) -> (20, 1570) [10 x 20]
+        ==> Extents: 4
+                (0, 0) -> (5, 20) [5 x 20]
+                (10, 1550) -> (20, 1570) [10 x 20]
+                (150, 150) -> (160, 170) [10 x 20]
+                (942, 238) -> (952, 258) [10 x 20]
+Tests completed in 0.000002 seconds.
+
+TEST  26: Four simple sprites (two extents).
+        Analyzing 4 rectangles...
+                (138, 165) -> (143, 185) [5 x 20]
+                (150, 150) -> (160, 170) [10 x 20]
+                (142, 138) -> (152, 158) [10 x 20]
+                (10, 10) -> (20, 30) [10 x 20]
+        Analyzing 3 rectangles...
+                (10, 10) -> (20, 30) [10 x 20]
+                (138, 165) -> (143, 185) [5 x 20]
+                (142, 138) -> (160, 170) [18 x 32]
+        Analyzing 2 rectangles...
+                (10, 10) -> (20, 30) [10 x 20]
+                (138, 138) -> (160, 185) [22 x 47]
+        ==> Extents: 2
+                (10, 10) -> (20, 30) [10 x 20]
+                (138, 138) -> (160, 185) [22 x 47]
+Tests completed in 0.000003 seconds.
+
+
+Completed tests.
+>>>>> IT IS UP TO YOU TO MANUALLY VERIFY THESE. <<<<<
