@@ -12,7 +12,7 @@
  * <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-#include "fastpbkdf2.h"
+#include "fastpbkdf2.h.bk"
 
 #include <assert.h>
 #include <string.h>

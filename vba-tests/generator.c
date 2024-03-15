@@ -39,6 +39,11 @@ Xoshiro128p__next_bounded(uint64_t low, uint64_t high)
     );
 }
 
+uint64_t Xoshiro128p__next_bounded_any()
+{
+    return Xoshiro128p__next_bounded(0, UINT64_MAX - 1);
+}
+
 void
 Xoshiro128p__init()
 {
