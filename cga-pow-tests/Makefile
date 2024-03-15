@@ -1,7 +1,8 @@
 # Compiler
 CC = g++
 # Compiler flags
-CFLAGS = -std=c++11 -Wall
+#   Optimization level can be tweaked if over-optimization occurs.
+CFLAGS = -O3 -std=c++11 -Wall
 
 # Get all .c and .cpp files in the current directory
 SRCS = $(wildcard *.c) $(wildcard *.cpp)

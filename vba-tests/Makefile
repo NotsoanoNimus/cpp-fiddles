@@ -1,7 +1,8 @@
 # Compiler
 CC = g++
 # Compiler flags
-CFLAGS = -Wall -fpermissive
+#   Optimization level can be tweaked if over-optimization occurs.
+CFLAGS = -O3 -Wall -fpermissive
 LDLIBS = -lssl -lcrypto -largon2 -lscrypt-kdf
 
 # Get all .c and .cpp files in the current directory
