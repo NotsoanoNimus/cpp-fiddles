@@ -112,6 +112,7 @@ iterative_proof_of_work_tests()
         timings[100 - test][1] = _convert_time_to_microseconds(addrgen_start_time, addrgen_end_time);
 
         /* CHECK FOR DIFFERENT MAC ADDRESSES WHICH WILL ALSO FORM A VALID ADDRESS. */
+        memset(hash, 0, 32);
         int collisions = 0;
         auto collision_start_time = std::chrono::high_resolution_clock::now();
         auto collision_end_time = std::chrono::high_resolution_clock::now();
@@ -129,12 +130,12 @@ iterative_proof_of_work_tests()
                     printf("%02x", mac_address[i]);
                 printf("\n");
 
-                ++collisions;
                 collision_end_time = std::chrono::high_resolution_clock::now();
 
                 timings[100 - test][2 + collisions] = _convert_time_to_microseconds(
                         collision_start_time, collision_end_time);
 
+                ++collisions;
                 collision_start_time = std::chrono::high_resolution_clock::now();
             }
         } while (collisions != 3);
@@ -148,11 +149,11 @@ iterative_proof_of_work_tests()
     printf("\n\n\n=== TIMING SUMMARY ===\n\t\tAll values are in microseconds.\n\n");
     for (int i = 0; i < 100; ++i) {
         printf("Test #%d:\n", i + 1);
-        printf("\tCompleted in: %llu", timings[i][0]);
-        printf("\tGenerated initial address in: %llu", timings[i][1]);
-        printf("\tGenerated collision #1 in: %llu", timings[i][2]);
-        printf("\tGenerated collision #2 in: %llu", timings[i][3]);
-        printf("\tGenerated collision #3 in: %llu", timings[i][4]);
+        printf("\tCompleted in: %llu us   (%f ms)\n", timings[i][0], (float)timings[i][0] / 1000);
+        printf("\tGenerated initial address in: %llu us   (%f ms)\n", timings[i][1], (float)timings[i][1] / 1000);
+        printf("\tGenerated collision #1 in: %llu us   (%f ms)\n", timings[i][2], (float)timings[i][2] / 1000);
+        printf("\tGenerated collision #2 in: %llu us   (%f ms)\n", timings[i][3], (float)timings[i][3] / 1000);
+        printf("\tGenerated collision #3 in: %llu us   (%f ms)\n", timings[i][4], (float)timings[i][4] / 1000);
         printf("\n");
     }
     printf("===========================\n");
