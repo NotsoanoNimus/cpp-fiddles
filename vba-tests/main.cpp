@@ -82,6 +82,14 @@ int main()
     generate_and_verify_pbkdf2();
     rotate_voucher_seed();
     generate_and_verify_argon2();
+
+    /* Final tests. These don't really do anything extra. */
+    /*   They demonstrate a way to encapsulate all properties of a voucher into an object. */
+    /*   It can then generate/verify an address given a data-link address and iterations input. */
+    // NdpVoucher vBigSeedPbkdf2(...);
+    // NdpVoucher vBigSeedArgon2(...);
+    // NdpVoucher vTinySeedPbKdf2(...);
+    // NdpVoucher vTinySeedArgon2(...);
 }
 
 
