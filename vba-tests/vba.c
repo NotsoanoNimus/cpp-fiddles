@@ -8,17 +8,20 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
                                      uint16_t iterations,
                                      enum VbaAlgorithm algorithm)
 {
-    size_t res_buffer_size;
+    size_t res_buffer_size = 32;
     uint8_t res_buffer[32] = {0};
 
-    /* Argon2-specific parameters. */
-    size_t salt_len = 9;
-    uint8_t salt[9] = { 0, 0, 0, 0, 0, 0, 'v', 'b', 'a' };
-    memcpy(&salt[0], mac_address, mac_address_size % salt_len);
+    /*
+     * The 'password' is always the voucher seed. The salt is a combination
+     *   of MAC + 'vba' + the 64-bit subnet prefix (or left-most 64 bits of the
+     *   unicast address that will be built). This example application uses "fe80::".
+     */
+    size_t salt_len = 17;
+    uint8_t salt[17] = { 0, 0, 0, 0, 0, 0, 'v', 'b', 'a', 0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    memcpy(&salt[0], mac_address, 6);
 
     switch (algorithm) {
         case PBKDF2:
-            res_buffer_size = 32;
             PKCS5_PBKDF2_HMAC(voucher_seed,
                               voucher_seed_size,
                               salt,
@@ -30,9 +33,8 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
 
             break;
         case ARGON2:
-            res_buffer_size = 16;
             argon2d_hash_raw(iterations,
-                             64,
+                             102400,   /* 100 x 1,024 in KiB == 100 MiB */
                              1,
                              voucher_seed,
                              voucher_seed_size,
@@ -42,12 +44,27 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
                              res_buffer_size);
 
             break;
+        case SCRYPT:
+            /* https://www.tarsnap.com/scrypt.html */
+            /* https://words.filippo.io/the-scrypt-parameters/ */
+            crypto_scrypt(voucher_seed,
+                          voucher_seed_size,
+                          salt,
+                          salt_len,
+                          65536, /* N */
+                          16,    /* r */
+                          1,     /* p */
+                          res_buffer,
+                          res_buffer_size);
+
+            break;
         default:
-            fprintf(stderr, "Address suffix computation called for unknown algorithm type.\n");
+            fprintf(stderr, "Address suffix computation called for an unknown algorithm type.\n");
             return -1;
     }
 
-    return *((uint64_t *)&res_buffer[res_buffer_size - 8]);
+    /* Always use the first 8 bytes (64 bits) of the resulting hash. */
+    return *((uint64_t *)&res_buffer[0]);
 }
 
 uint64_t build_address_suffix(uint16_t iterations, uint64_t hash_result)

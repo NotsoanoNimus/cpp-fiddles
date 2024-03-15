@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <cstdlib>
 
 #include "tinymt64.h"
 
