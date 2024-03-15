@@ -1,6 +1,13 @@
 #include "vba.h"
 
 
+inline void rotate_voucher_seed()
+{
+    for (int i = 0; i < sizeof(global_voucher_seed) / 8; ++i)
+        *((uint64_t *)&global_voucher_seed[i]) = Xoshiro128p__next_bounded_any();
+}
+
+
 uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
                                      size_t voucher_seed_size,
                                      uint8_t *mac_address,

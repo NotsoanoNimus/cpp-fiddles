@@ -1,4 +1,5 @@
 #include <chrono>
+#include <sstream>
 
 #include "collisions.hpp"
 
@@ -81,7 +82,7 @@ _find_collisions(VbaAlgorithm algorithm)
                                         algorithm);
 
         uint64_t legitimate_suffix = build_address_suffix(iterations,
-                                                        legitimate_hash);
+                                                          legitimate_hash);
         
         printf("\tGot address: ");
         print_lladdr_from_suffix(legitimate_suffix);
@@ -111,8 +112,8 @@ _find_collisions(VbaAlgorithm algorithm)
             printf("FAILURE: Loop broken; no matches");
         } else {
             printf("SUCCESS: Impostor MAC is ");
-            for (int i = 0; i < 6; ++i)
-                printf("%02x%s", fake_mac[i], i != 5 ? "-" : "");
+            for (int x = 0; x < 6; ++x)
+                printf("%02x%s", fake_mac[x], x != 5 ? "-" : "");
         }
 
         printf("\n\t\tOrdered... ");
@@ -152,15 +153,15 @@ _find_collisions(VbaAlgorithm algorithm)
             printf("FAILURE: Maximum MACs exhausted; no matches");
         } else {
             printf("SUCCESS: Impostor MAC is ");
-            for (int i = 0; i < 6; ++i)
-                printf("%02x%s", fake_mac[i], i != 5 ? "-" : "");
+            for (int x = 0; x < 6; ++x)
+                printf("%02x%s", fake_mac[x], x != 5 ? "-" : "");
         }
 
         printf("\n\n");
 
         std::stringstream s_random, s_ordered;
-        s_random << "Iterations " << iterations;
-        s_ordered << "Iterations " << iterations;
+        s_random << "Random. Iterations " << iterations;
+        s_ordered << "Ordered. Iterations " << iterations;
         Timing::RecordTiming(j, start_random, end_random, s_random.str());
         Timing::RecordTiming(j + 1, start_ordered, end_ordered, s_ordered.str());
     }

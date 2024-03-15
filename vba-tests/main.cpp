@@ -32,13 +32,6 @@
     Timing::DumpToCsv(#test_name, csv);
 
 
-static inline void rotate_voucher_seed()
-{
-    for (int i = 0; i < sizeof(global_voucher_seed) / 8; ++i)
-        *((uint64_t *)&global_voucher_seed[i]) = Xoshiro128p__next_bounded_any();
-}
-
-
 int main()
 {
     /* Initialize the optimized PRNG and some results recording devices. */

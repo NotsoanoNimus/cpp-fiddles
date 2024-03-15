@@ -39,6 +39,8 @@ extern uint16_t _fixed_iter[FIXED_ITERS_COUNT] = {
 extern uint16_t _fixed_iter_step = 0x100;
 
 
+inline void rotate_voucher_seed();
+
 uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
                                      size_t voucher_seed_size,
                                      uint8_t *mac_address,
