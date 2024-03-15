@@ -2,7 +2,7 @@
 CC = g++
 # Compiler flags
 CFLAGS = -Wall -fpermissive
-LDLIBS = -lssl -lcrypto -largon2
+LDLIBS = -lssl -lcrypto -largon2 -lscrypt-kdf
 
 # Get all .c and .cpp files in the current directory
 SRCS = $(wildcard *.c) $(wildcard *.cpp)
