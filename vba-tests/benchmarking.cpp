@@ -9,6 +9,8 @@
 
 
 extern unsigned char global_voucher_seed[8];
+extern uint16_t _fixed_iter[FIXED_ITERS_COUNT];
+extern uint16_t _fixed_iter_step;
 
 
 static inline void _benchmark_algo(VbaAlgorithm);
@@ -51,9 +53,7 @@ _benchmark_algo(VbaAlgorithm algorithm)
 
         uint64_t result =
                 compute_address_hash_suffix(global_voucher_seed,
-                                            8,
                                             mac_address,
-                                            6,
                                             iterations,
                                             algorithm);
 
@@ -63,7 +63,7 @@ _benchmark_algo(VbaAlgorithm algorithm)
         s << "Iterations " << iterations;
         Timing::RecordTiming(i, start, end, s.str());
 
-        printf("Result: 0x%016llx\n\tMAC Address: ", result);
+        printf("Result: 0x%016lx\n\tMAC Address: ", result);
 
         for (int i = 0; i < 6; ++i)
             printf("%02x%s", mac_address[i], i != 5 ? "-" : "");
@@ -76,8 +76,8 @@ _benchmark_algo(VbaAlgorithm algorithm)
         printf("\n\tFinal IPv6 Addr (lladdr): ");
         print_lladdr_from_suffix(addr_suffix);
 
-        auto us =  _convert_time_to_microseconds(start, end);
-        printf("\tDuration: %10u us   (%10f ms)\n\n", us, us / 1000.0);
+        auto us =  Timing::ConvertTimeToMicroseconds(start, end);
+        printf("\tDuration: %16lu us   (%16f ms)\n\n", us, us / 1000.0);
 
         if (iterations == 0xFF00) break;
     }

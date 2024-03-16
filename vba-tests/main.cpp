@@ -46,18 +46,18 @@ int main()
     RECORD_TIMES("BENCH_ARGON2", benchmark_argon2);
     RECORD_TIMES("BENCH_SCRYPT", benchmark_scrypt);
 
-    /* The next tests are more targeted towards the purpose of VBAs. */
-    /*   A few different fixed iteration counts are compared for security. */
-    RECORD_TIMES("COLLISIONS_PBKDF2", find_collisions_pbkdf2);
-    RECORD_TIMES("COLLISIONS_ARGON2", find_collisions_argon2);
-    RECORD_TIMES("COLLISIONS_SCRYPT", find_collisions_scrypt);
-
     /* The next tests analyze the performance of recipient machines. */
     /*   By nature of the algorithm, receivers spend the same time as generators. */
     /*   Again, this is done at a few different fixed iteration counts. */
     RECORD_TIMES("GNV_PBKDF2", generate_and_verify_pbkdf2);
     RECORD_TIMES("GNV_ARGON2", generate_and_verify_argon2);
     RECORD_TIMES("GNV_SCRYPT", generate_and_verify_scrypt);
+
+    /* The next tests are more targeted towards the purpose of VBAs. */
+    /*   A few different fixed iteration counts are compared for security. */
+//    RECORD_TIMES("COLLISIONS_PBKDF2", find_collisions_pbkdf2);
+//    RECORD_TIMES("COLLISIONS_ARGON2", find_collisions_argon2);
+//    RECORD_TIMES("COLLISIONS_SCRYPT", find_collisions_scrypt);
 
     /* Final tests. These don't really do anything extra. */
     /*   They demonstrate a way to encapsulate all properties of a voucher into an object. */
@@ -69,5 +69,5 @@ int main()
 
 
     /* Output the CSV to the console. This can be changed later to write to a file. */
-    std::cout << "Final Data:\n" << csv.str();
+    printf("\n\n=================================\nFinal Data:\n%s", csv.str().c_str());
 }

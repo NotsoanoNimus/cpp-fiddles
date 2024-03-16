@@ -1,17 +1,37 @@
 #include "vba.h"
+#include "generator.h"
 
 
-inline void rotate_voucher_seed()
+unsigned char global_voucher_seed[16] = {0};
+uint16_t _fixed_iter[FIXED_ITERS_COUNT] = {
+        0x0001,
+        0x0010,
+        0x0100,
+        0x0500,
+        0x1000,
+        0x7000,
+        0x8500,
+        0x8000,
+        0x8500,
+        0x9000,
+        0xF000,
+        0xF500,
+        0xFE00,
+        0xFEE0,
+        0xFFFE,
+};
+uint16_t _fixed_iter_step = 0x100;
+
+
+void rotate_voucher_seed()
 {
-    for (int i = 0; i < sizeof(global_voucher_seed) / 8; ++i)
+    for (unsigned int i = 0; i < sizeof(global_voucher_seed) / sizeof(uint64_t); ++i)
         *((uint64_t *)&global_voucher_seed[i]) = Xoshiro128p__next_bounded_any();
 }
 
 
 uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
-                                     size_t voucher_seed_size,
                                      uint8_t *mac_address,
-                                     size_t mac_address_size,
                                      uint16_t iterations,
                                      enum VbaAlgorithm algorithm)
 {
@@ -29,8 +49,8 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
 
     switch (algorithm) {
         case PBKDF2:
-            PKCS5_PBKDF2_HMAC(voucher_seed,
-                              voucher_seed_size,
+            PKCS5_PBKDF2_HMAC((const char*)voucher_seed,
+                              16,
                               salt,
                               salt_len,
                               iterations * ITERATIONS_FACTOR,
@@ -41,10 +61,10 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
             break;
         case ARGON2:
             argon2d_hash_raw(iterations,
-                             102400,   /* 100 x 1,024 in KiB == 100 MiB */
+                             128,   /* 128 KiB */
                              1,
                              voucher_seed,
-                             voucher_seed_size,
+                             16,
                              salt,
                              salt_len,
                              res_buffer,
@@ -54,15 +74,15 @@ uint64_t compute_address_hash_suffix(uint8_t *voucher_seed,
         case SCRYPT:
             /* https://www.tarsnap.com/scrypt.html */
             /* https://words.filippo.io/the-scrypt-parameters/ */
-            crypto_scrypt(voucher_seed,
-                          voucher_seed_size,
-                          salt,
-                          salt_len,
-                          65536, /* N */
-                          16,    /* r */
-                          1,     /* p */
-                          res_buffer,
-                          res_buffer_size);
+            libscrypt_scrypt(voucher_seed,
+                             16,
+                             salt,
+                             salt_len,
+                             128,   /* N */
+                             iterations,   /* r */
+                             1,   /* p */
+                             res_buffer,
+                             res_buffer_size);
 
             break;
         default:
@@ -86,4 +106,20 @@ void print_lladdr_from_suffix(uint64_t suffix)
         printf("%02x%s",
                (uint8_t)(0xFF & (suffix >> (64 - (i * 8)))),
                (i - 1) % 2 && i < 8 ? ":" : "");
+}
+
+bool verify_address_suffix(uint64_t suffix,
+                           uint8_t* voucher_seed,
+                           uint8_t* mac_address,
+                           VbaAlgorithm algorithm) {
+    uint16_t iterations = (uint16_t)((~suffix >> 48) & 0xFFFF);
+
+    uint64_t hash_result = compute_address_hash_suffix(voucher_seed,
+                                                       mac_address,
+                                                       iterations,
+                                                       algorithm);
+
+    uint64_t computed_suffix = build_address_suffix(iterations, hash_result);
+
+    return computed_suffix == suffix;
 }

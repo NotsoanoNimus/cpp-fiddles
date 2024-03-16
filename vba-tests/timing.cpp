@@ -1,6 +1,8 @@
 #include "timing.hpp"
 
 
+std::vector<std::tuple<uint64_t, uint64_t, double, double, std::string>> Timing::timing_results{};
+
 uint64_t Timing::ConvertTimeToMicroseconds(std::chrono::high_resolution_clock::time_point start,
                                            std::chrono::high_resolution_clock::time_point end)
 {

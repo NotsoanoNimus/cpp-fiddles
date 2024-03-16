@@ -8,12 +8,15 @@
 #include "timing.hpp"
 
 
-static inline void _find_collisions(VbaAlgorithm);
+extern uint16_t _fixed_iter[FIXED_ITERS_COUNT];
+extern uint16_t _fixed_iter_step;
+
+static inline void _find_collisions(VbaAlgorithm, bool);
 
 static inline void _roll_mac_address(uint8_t* mac_address, uint64_t rand)
 {
     /* Generate and use any random MAC address. Unrolled for speed. */
-    rand = -1 == rand ? Xoshiro128p__next_bounded_any() : rand;
+    rand = UINT64_MAX == rand ? Xoshiro128p__next_bounded_any() : rand;
 
     mac_address[0] = *(((uint8_t *)&rand) + 0);
     mac_address[1] = *(((uint8_t *)&rand) + 1);
@@ -23,27 +26,43 @@ static inline void _roll_mac_address(uint8_t* mac_address, uint64_t rand)
     mac_address[5] = *(((uint8_t *)&rand) + 5);
 }
 
-static _stable_mac_address[6] = {
+static uint8_t _stable_mac_address[6] = {
     0xC0, 0x01, 0xCA, 0x70, 0xFF, 0xFF
 };
-static _stable_voucher_seed[8] = {
+static uint8_t _stable_voucher_seed[8] = {
     0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xF0, 0x0D
 };
 
 
+void generate_addresses_pbkdf2()
+{
+    return _find_collisions(PBKDF2, true);
+}
+
+void generate_addresses_argon2()
+{
+    return _find_collisions(ARGON2, true);
+}
+
+void generate_addresses_scrypt()
+{
+    return _find_collisions(SCRYPT, true);
+}
+
+
 void find_collisions_pbkdf2()
 {
-    return _find_collisions(PBKDF2);
+    return _find_collisions(PBKDF2, true);
 }
 
 void find_collisions_argon2()
 {
-    return _find_collisions(ARGON2);
+    return _find_collisions(ARGON2, true);
 }
 
 void find_collisions_scrypt()
 {
-    return _find_collisions(SCRYPT);
+    return _find_collisions(SCRYPT, true);
 }
 
 
@@ -64,7 +83,7 @@ void find_collisions_scrypt()
  *   See: https://www.rfc-editor.org/rfc/rfc7042#section-2  
  */
 static inline void
-_find_collisions(VbaAlgorithm algorithm)
+_find_collisions(VbaAlgorithm algorithm, bool check_collisions)
 {
     uint8_t fake_mac[6] = {0};
 
@@ -75,9 +94,7 @@ _find_collisions(VbaAlgorithm algorithm)
 
         uint64_t legitimate_hash =
             compute_address_hash_suffix(_stable_voucher_seed,
-                                        8,
-                                        legitimate_mac,
-                                        6,
+                                        _stable_mac_address,
                                         iterations,
                                         algorithm);
 
@@ -86,24 +103,30 @@ _find_collisions(VbaAlgorithm algorithm)
         
         printf("\tGot address: ");
         print_lladdr_from_suffix(legitimate_suffix);
-        printf("\n\tNow searching for a collision...\n\t\tRandom... ");
+
+        if (!check_collisions) continue;
+
+        printf("\n\tNow searching for a collision...\n\t\tRandom... \n");
 
         auto start_random = std::chrono::high_resolution_clock::now();
 
         uint64_t fake_suffix = 0x0;
-        uint64_t loop_breaker = 1 << 40;   /* 1,099,511,627,776 attempts. */
+        uint64_t loop_breaker = 1ULL << 24;
         do {
-            _roll_mac_address(fake_mac, -1);
+            _roll_mac_address(fake_mac, UINT64_MAX);
 
             uint64_t fake_hash =
                 compute_address_hash_suffix(_stable_voucher_seed,
-                                            8,
                                             fake_mac,
-                                            6,
                                             iterations,
                                             algorithm);
 
             fake_suffix = build_address_suffix(iterations, fake_hash);
+
+            printf("\rattempt '%lu'; trying MAC ", loop_breaker);
+            for (int x = 0; x < 6; ++x)
+                printf("%02x%s", fake_mac[x], x != 5 ? "-" : "");
+            fflush(stdout);
         } while (--loop_breaker && fake_suffix != legitimate_suffix);
 
         auto end_random = std::chrono::high_resolution_clock::now();
@@ -116,7 +139,7 @@ _find_collisions(VbaAlgorithm algorithm)
                 printf("%02x%s", fake_mac[x], x != 5 ? "-" : "");
         }
 
-        printf("\n\t\tOrdered... ");
+        printf("\n\t\tOrdered... \n");
         auto start_ordered = std::chrono::high_resolution_clock::now();
 
         fake_suffix = 0x0;
@@ -138,14 +161,17 @@ _find_collisions(VbaAlgorithm algorithm)
 
             uint64_t fake_hash =
                 compute_address_hash_suffix(_stable_voucher_seed,
-                                            8,
                                             fake_mac,
-                                            6,
                                             iterations,
                                             algorithm);
 
             fake_suffix = build_address_suffix(iterations, fake_hash);
-        } while (++mac < 0x0000FFFFFFFFFFFF);
+
+            printf("\rtrying MAC ");
+            for (int x = 0; x < 6; ++x)
+                printf("%02x%s", fake_mac[x], x != 5 ? "-" : "");
+            fflush(stdout);
+        } while (++mac < 0x0000FFFFFFFFFFFF && fake_suffix != legitimate_suffix);
 
         auto end_ordered = std::chrono::high_resolution_clock::now();
 
@@ -160,8 +186,8 @@ _find_collisions(VbaAlgorithm algorithm)
         printf("\n\n");
 
         std::stringstream s_random, s_ordered;
-        s_random << "Random. Iterations " << iterations;
-        s_ordered << "Ordered. Iterations " << iterations;
+        s_random << "Random. " << algorithm << " / Iterations: " << iterations;
+        s_ordered << "Ordered. " << algorithm << " / Iterations: " << iterations;
         Timing::RecordTiming(j, start_random, end_random, s_random.str());
         Timing::RecordTiming(j + 1, start_ordered, end_ordered, s_ordered.str());
     }

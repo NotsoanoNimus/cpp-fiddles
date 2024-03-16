@@ -9,13 +9,15 @@
 
 
 extern unsigned char global_voucher_seed[8];
+extern uint16_t _fixed_iter[FIXED_ITERS_COUNT];
+extern uint16_t _fixed_iter_step;
 
 static inline void _generate_and_verify(VbaAlgorithm);
 
 static inline void _roll_mac_address(uint8_t* mac_address, uint64_t rand)
 {
     /* Generate and use any random MAC address. Unrolled for speed. */
-    rand = -1 == rand ? Xoshiro128p__next_bounded_any() : rand;
+    rand = UINT64_MAX == rand ? Xoshiro128p__next_bounded_any() : rand;
 
     mac_address[0] = *(((uint8_t *)&rand) + 0);
     mac_address[1] = *(((uint8_t *)&rand) + 1);
@@ -49,21 +51,25 @@ _generate_and_verify(VbaAlgorithm algorithm)
 
     for (int i = 0, j = 0; i < FIXED_ITERS_COUNT; ++i, j += 2) {
         uint16_t iterations = _fixed_iter[i];
+        _roll_mac_address(mac_address, UINT64_MAX);
 
-        printf("GENERATE AND VERIFY #%d:\n  Generate.\n\t'0x%04x' (%d) iterations\n\tVoucher: ", i, iterations, iterations);
+        uint64_t true_iter = algorithm == PBKDF2 ? iterations * ITERATIONS_FACTOR : iterations;
+        printf("GENERATE AND VERIFY #%d (Algorithm %d):\n  Generate.\n\t%lu iterations\n\tVoucher: ",
+               i,
+               algorithm,
+               true_iter);
         for (int x = 0; x < 8; ++x)
             printf("%02x", global_voucher_seed[x]);
         printf("\n\tMAC: ");
         for (int x = 0; x < 6; ++x)
             printf("%02x%s", mac_address[x], x != 5 ? "-" : "");
+        fflush(stdout);
 
         auto start_generate = std::chrono::high_resolution_clock::now();
 
         uint64_t legitimate_hash =
             compute_address_hash_suffix(global_voucher_seed,
-                                        8,
                                         mac_address,
-                                        6,
                                         iterations,
                                         algorithm);
 
@@ -76,15 +82,23 @@ _generate_and_verify(VbaAlgorithm algorithm)
         print_lladdr_from_suffix(legitimate_suffix);
 
         printf("\n  Verify.\n\t");
-
         auto start_verify = std::chrono::high_resolution_clock::now();
+
+        bool verified = verify_address_suffix(legitimate_suffix,
+                                              global_voucher_seed,
+                                              mac_address,
+                                              algorithm);
+
         auto end_verify = std::chrono::high_resolution_clock::now();
 
-        printf("OK");
+        if (verified)
+            printf("OK");
+        else
+            printf("FAILED VERIFICATION");
 
         std::stringstream s_generate, s_verify;
-        s_generate << "Generate. Iterations " << iterations;
-        s_verify << "Verify. Iterations " << iterations;
+        s_generate << "Generate. " << algorithm << " / Iterations " << iterations;
+        s_verify << "Verify. " << algorithm << " / Iterations " << iterations;
         Timing::RecordTiming(j, start_generate, end_generate, s_generate.str());
         Timing::RecordTiming(j + 1, start_verify, end_verify, s_verify.str());
 
