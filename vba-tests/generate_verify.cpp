@@ -8,7 +8,7 @@
 #include "timing.hpp"
 
 
-extern unsigned char global_voucher_seed[8];
+extern unsigned char global_voucher_seed[16];
 extern uint16_t _fixed_iter[FIXED_ITERS_COUNT];
 extern uint16_t _fixed_iter_step;
 
@@ -58,7 +58,7 @@ _generate_and_verify(VbaAlgorithm algorithm)
                i,
                algorithm,
                true_iter);
-        for (int x = 0; x < 8; ++x)
+        for (int x = 0; x < 16; ++x)
             printf("%02x", global_voucher_seed[x]);
         printf("\n\tMAC: ");
         for (int x = 0; x < 6; ++x)

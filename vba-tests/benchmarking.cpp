@@ -8,7 +8,7 @@
 #include "vba.h"
 
 
-extern unsigned char global_voucher_seed[8];
+extern unsigned char global_voucher_seed[16];
 extern uint16_t _fixed_iter[FIXED_ITERS_COUNT];
 extern uint16_t _fixed_iter_step;
 
@@ -39,7 +39,7 @@ _benchmark_algo(VbaAlgorithm algorithm)
 {
     uint8_t mac_address[6] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
 
-    for (int i = 0, iterations = 0;
+    for (int i = 0, iterations = _fixed_iter_step;
          iterations <= 0xFF00;
          iterations += _fixed_iter_step, ++i)
     {
@@ -69,7 +69,7 @@ _benchmark_algo(VbaAlgorithm algorithm)
             printf("%02x%s", mac_address[i], i != 5 ? "-" : "");
 
         printf("    Seed: 0x");
-        for (int i = 0; i < 8; ++i)
+        for (unsigned int i = 0; i < sizeof(global_voucher_seed); ++i)
             printf("%02x", global_voucher_seed[i]);
 
         uint64_t addr_suffix = build_address_suffix(iterations, result);
